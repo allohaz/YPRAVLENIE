@@ -13,6 +13,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.os.Bundle
 import android.os.Handler
@@ -40,6 +41,7 @@ import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Всё "тяжёлое" живёт здесь, и только пока сервис запущен (кнопка Старт).
@@ -70,9 +72,28 @@ class CameraService : LifecycleService() {
 
     // поле analyzer-потока
     private var buffer: Bitmap? = null
+    private var rotated: Bitmap? = null
+    private var rotatedCanvas: Canvas? = null
+    private val rotMatrix = Matrix()
     private var lastFrame = 0L
     private var handCounter = 0
     @Volatile private var lastSeen = 0L
+    @Volatile private var lastHandSeen = 0L
+
+    // диагностика FPS для главного экрана
+    private val faceCount = AtomicInteger()
+    private val handCount = AtomicInteger()
+    private var faceDelegate = "?"
+    private var handDelegate = "?"
+    private var lastUsedGpu = false
+    private val ticker = object : Runnable {
+        override fun run() {
+            State.faceFps = faceCount.getAndSet(0)
+            State.handFps = handCount.getAndSet(0)
+            State.delegates = "лицо: $faceDelegate, руки: $handDelegate"
+            main.postDelayed(this, 1000)
+        }
+    }
 
     private var recognizer: SpeechRecognizer? = null
     private var listening = false
@@ -87,7 +108,11 @@ class CameraService : LifecycleService() {
     )
     private val handDetector = HandGestureDetector(
         onGesture = { GestureAccessibilityService.instance?.handle(it) },
-        onPresence = { lastSeen = SystemClock.uptimeMillis() }
+        onPresence = {
+            val t = SystemClock.uptimeMillis()
+            lastSeen = t
+            lastHandSeen = t
+        }
     )
 
     private val screenReceiver = object : BroadcastReceiver() {
@@ -106,6 +131,7 @@ class CameraService : LifecycleService() {
         Config.ensureLoaded(this)
         startAsForeground()
         executor = Executors.newSingleThreadExecutor()
+        main.postDelayed(ticker, 1000)
 
         registerReceiver(screenReceiver, IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_OFF)
@@ -131,11 +157,12 @@ class CameraService : LifecycleService() {
                     .setRunningMode(RunningMode.LIVE_STREAM)
                     .setNumFaces(1)
                     .setOutputFaceBlendshapes(true)
-                    .setResultListener { r, _ -> faceDetector.process(r) }
+                    .setResultListener { r, _ -> faceCount.incrementAndGet(); faceDetector.process(r) }
                     .setErrorListener { it.printStackTrace() }
                     .build()
             )
         }
+        faceDelegate = if (lastUsedGpu) "GPU" else "CPU"
         hands = create("gesture_recognizer.task", s.useGpu) { base ->
             GestureRecognizer.createFromOptions(
                 this,
@@ -143,11 +170,15 @@ class CameraService : LifecycleService() {
                     .setBaseOptions(base)
                     .setRunningMode(RunningMode.LIVE_STREAM)
                     .setNumHands(1)
-                    .setResultListener { r, _ -> handDetector.process(r) }
+                    .setMinHandDetectionConfidence(0.4f)
+                    .setMinHandPresenceConfidence(0.4f)
+                    .setMinTrackingConfidence(0.4f)
+                    .setResultListener { r, _ -> handCount.incrementAndGet(); handDetector.process(r) }
                     .setErrorListener { it.printStackTrace() }
                     .build()
             )
         }
+        handDelegate = if (lastUsedGpu) "GPU" else "CPU"
     }
 
     /** Сначала GPU, при ошибке CPU. */
@@ -159,8 +190,9 @@ class CameraService : LifecycleService() {
         }
         if (gpu) {
             val r = runCatching { build(base(true)) }
-            if (r.isSuccess) return r.getOrNull()
+            if (r.isSuccess) { lastUsedGpu = true; return r.getOrNull() }
         }
+        lastUsedGpu = false
         return runCatching { build(base(false)) }.getOrElse {
             toast("Не загрузилась модель $model: ${it.message}")
             null
@@ -228,14 +260,32 @@ class CameraService : LifecycleService() {
                 buffer = buf
             }
             proxy.use { buf.copyPixelsFromBuffer(it.planes[0].buffer) }
-            val frame = if (rotation == 0f) buf
-            else Bitmap.createBitmap(buf, 0, 0, buf.width, buf.height, Matrix().apply { postRotate(rotation) }, false)
+            val frame: Bitmap = if (rotation == 0f) buf else {
+                val quarter = rotation == 90f || rotation == 270f
+                val w = if (quarter) buf.height else buf.width
+                val h = if (quarter) buf.width else buf.height
+                var r = rotated
+                if (r == null || r.width != w || r.height != h) {
+                    r = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+                    rotated = r
+                    rotatedCanvas = Canvas(r)
+                }
+                rotMatrix.reset()
+                rotMatrix.postTranslate(-buf.width / 2f, -buf.height / 2f)
+                rotMatrix.postRotate(rotation)
+                rotMatrix.postTranslate(w / 2f, h / 2f)
+                rotatedCanvas!!.drawBitmap(buf, rotMatrix, null)
+                r
+            }
 
             val img = BitmapImageBuilder(frame).build()
             if (!paused) face?.detectAsync(img, now)
 
             val wantHands = paused || cfg.hands
-            val every = if (idle || paused) 1 else cfg.handEvery
+            // рука в кадре или недавно была: считаем каждый кадр (отслеживание дешёвое);
+            // руки нет: ищем реже, чтобы экономить батарею
+            val handRecent = now - lastHandSeen < 1500
+            val every = if (idle || paused || handRecent) 1 else cfg.handEvery
             if (wantHands && (++handCounter % every == 0)) hands?.recognizeAsync(img, now)
         }
         return analysis
@@ -334,6 +384,7 @@ class CameraService : LifecycleService() {
         runCatching { unregisterReceiver(screenReceiver) }
         unbindCamera()
         main.removeCallbacks(listenTimeout)
+        main.removeCallbacks(ticker)
         recognizer?.destroy()
         executor.execute {
             runCatching { face?.close() }

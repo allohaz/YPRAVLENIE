@@ -56,12 +56,27 @@ class GestureAccessibilityService : AccessibilityService() {
 
     // ---------- жесты → действия ----------
 
+    private val knownLaunchers = setOf(
+        "com.miui.home", "com.mi.android.globallauncher", "com.android.launcher3",
+        "com.google.android.apps.nexuslauncher", "com.sec.android.app.launcher"
+    )
+
+    /** Пакет окна, которое на экране прямо сейчас (кэш из событий может устареть после блокировки экрана). */
+    private fun activePackage(): String {
+        val p = rootInActiveWindow?.packageName?.toString()
+        if (p != null && p != "com.android.systemui" && p != "android" && !p.contains("inputmethod")) {
+            State.currentPackage = p
+            return p
+        }
+        return State.currentPackage
+    }
+
     fun handle(g: Gesture) {
         main.post {
             val cfg = Config.cfg
-            val pkg = State.currentPackage
+            val pkg = activePackage()
             val profile = cfg.profiles.firstOrNull { p ->
-                p.packages.any { it == pkg || (it == "@home" && pkg == launcherPkg) }
+                p.packages.any { it == pkg || (it == "@home" && (pkg == launcherPkg || pkg in knownLaunchers)) }
             }
             val action = profile?.actions?.get(g) ?: cfg.global[g] ?: return@post
             // на паузе работают только "пауза" и "слушать"

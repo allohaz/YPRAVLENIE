@@ -20,6 +20,15 @@ class MainActivity : Activity() {
 
     private lateinit var status: TextView
     private lateinit var bindings: TextView
+    private lateinit var perf: TextView
+    private val tick = object : Runnable {
+        override fun run() {
+            perf.text = if (CameraService.instance != null)
+                "Кадры в секунду: лицо ${State.faceFps}, руки ${State.handFps} (руки считаются реже, это нормально)\nМодели: ${State.delegates}"
+            else ""
+            perf.postDelayed(this, 700)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +41,8 @@ class MainActivity : Activity() {
         }
         status = TextView(this).apply { textSize = 15f }
         root.addView(status)
+        perf = TextView(this).apply { textSize = 12f; setPadding(0, 8, 0, 8) }
+        root.addView(perf)
 
         fun button(label: String, onClick: () -> Unit) {
             root.addView(Button(this).apply {
@@ -77,6 +88,12 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         refresh()
+        perf.post(tick)
+    }
+
+    override fun onPause() {
+        perf.removeCallbacks(tick)
+        super.onPause()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

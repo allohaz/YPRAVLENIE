@@ -11,6 +11,10 @@ object State {
     // задел под аналоговое управление (джойстик головой): поворот и наклон, -0.5..0.5 и градусы
     @Volatile var headYaw = 0f
     @Volatile var headRoll = 0f
+    // диагностика для главного экрана
+    @Volatile var faceFps = 0
+    @Volatile var handFps = 0
+    @Volatile var delegates = ""
 }
 
 object Feedback {

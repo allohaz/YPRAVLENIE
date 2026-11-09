@@ -4,12 +4,12 @@
     "fpsIdle": 5,
     "idleAfterSec": 8,
     "frame": [
-      320,
-      240
+      640,
+      480
     ],
     "useGpu": true,
     "hands": true,
-    "handEvery": 2,
+    "handEvery": 3,
     "mirror": true,
     "swapSides": false,
     "voiceLang": "ru-RU",
@@ -17,51 +17,54 @@
   },
   "gestures": {
     "TILT_RIGHT": {
-      "hold": 250,
-      "cooldown": 500,
-      "th": 15
-    },
-    "HAND_THUMB_UP": {
-      "hold": 250,
-      "cooldown": 800
+      "hold": 120,
+      "cooldown": 350,
+      "th": 10
     },
     "TILT_LEFT": {
-      "hold": 250,
-      "cooldown": 500,
-      "th": 15
+      "hold": 120,
+      "cooldown": 350,
+      "th": 10
     },
-    "HAND_FIST": {
-      "hold": 250,
-      "cooldown": 800
+    "HAND_THUMB_UP": {
+      "hold": 150,
+      "cooldown": 700,
+      "th": 0.5
+    },
+    "HAND_THUMB_DOWN": {
+      "hold": 150,
+      "cooldown": 700,
+      "th": 0.5
     },
     "BROWS_UP": {
+      "hold": 150,
+      "cooldown": 700,
+      "th": 0.45
+    },
+    "BROWS_DOWN": {
       "hold": 200,
+      "cooldown": 700,
+      "th": 0.45
+    },
+    "MOUTH_OPEN": {
+      "hold": 150,
       "cooldown": 700,
       "th": 0.55
     },
-    "HAND_SWIPE_LEFT": {
-      "cooldown": 700,
-      "th": 0.22
-    },
-    "MOUTH_OPEN": {
+    "HAND_FIST": {
       "hold": 200,
       "cooldown": 800,
       "th": 0.5
     },
     "HAND_POINT_UP": {
-      "hold": 300,
-      "cooldown": 1500
+      "hold": 250,
+      "cooldown": 1500,
+      "th": 0.5
     },
     "HAND_VICTORY": {
-      "hold": 800,
-      "cooldown": 1500
-    },
-    "HAND_THUMB_DOWN": {
-      "hold": 250,
-      "cooldown": 800
-    },
-    "HAND_SWIPE_RIGHT": {
-      "cooldown": 700
+      "hold": 700,
+      "cooldown": 1500,
+      "th": 0.5
     }
   },
   "global": {
@@ -97,28 +100,18 @@
         "TILT_RIGHT": {
           "type": "swipe",
           "x1": 0.5,
-          "y1": 0.75,
+          "y1": 0.78,
           "x2": 0.5,
-          "y2": 0.25,
-          "ms": 160
-        },
-        "HAND_THUMB_UP": {
-          "type": "doubleTap",
-          "x": 0.5,
-          "y": 0.45
+          "y2": 0.22,
+          "ms": 120
         },
         "TILT_LEFT": {
           "type": "swipe",
           "x1": 0.5,
-          "y1": 0.3,
+          "y1": 0.25,
           "x2": 0.5,
-          "y2": 0.75,
-          "ms": 160
-        },
-        "HAND_FIST": {
-          "type": "tap",
-          "x": 0.5,
-          "y": 0.5
+          "y2": 0.8,
+          "ms": 120
         },
         "BROWS_UP": {
           "type": "clickText",
@@ -127,15 +120,29 @@
             "omment"
           ]
         },
-        "HAND_SWIPE_LEFT": {
-          "type": "back"
-        },
-        "MOUTH_OPEN": {
+        "BROWS_DOWN": {
           "type": "clickText",
           "text": [
             "оделиться",
             "Share"
           ]
+        },
+        "MOUTH_OPEN": {
+          "type": "clickText",
+          "text": [
+            "Входящие",
+            "Inbox",
+            "Сообщения",
+            "Messages"
+          ]
+        },
+        "HAND_THUMB_UP": {
+          "type": "doubleTap",
+          "x": 0.5,
+          "y": 0.45
+        },
+        "HAND_THUMB_DOWN": {
+          "type": "back"
         }
       }
     },
