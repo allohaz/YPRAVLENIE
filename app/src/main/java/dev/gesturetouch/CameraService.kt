@@ -236,7 +236,7 @@ class CameraService : LifecycleService() {
 
             val wantHands = paused || cfg.hands
             val every = if (idle || paused) 1 else cfg.handEvery
-            if (wantHands && (++handCounter % every == 0)) hands?.detectAsync(img, now)
+            if (wantHands && (++handCounter % every == 0)) hands?.recognizeAsync(img, now)
         }
         return analysis
     }
