@@ -1,0 +1,350 @@
+{
+  "settings": {
+    "fpsActive": 30,
+    "fpsIdle": 5,
+    "idleAfterSec": 8,
+    "frame": [
+      320,
+      240
+    ],
+    "useGpu": true,
+    "hands": true,
+    "handEvery": 2,
+    "mirror": true,
+    "swapSides": false,
+    "voiceLang": "ru-RU",
+    "vibrate": true
+  },
+  "gestures": {
+    "TILT_RIGHT": {
+      "hold": 250,
+      "cooldown": 500,
+      "th": 15
+    },
+    "HAND_THUMB_UP": {
+      "hold": 250,
+      "cooldown": 800
+    },
+    "TILT_LEFT": {
+      "hold": 250,
+      "cooldown": 500,
+      "th": 15
+    },
+    "HAND_FIST": {
+      "hold": 250,
+      "cooldown": 800
+    },
+    "BROWS_UP": {
+      "hold": 200,
+      "cooldown": 700,
+      "th": 0.55
+    },
+    "HAND_SWIPE_LEFT": {
+      "cooldown": 700,
+      "th": 0.22
+    },
+    "MOUTH_OPEN": {
+      "hold": 200,
+      "cooldown": 800,
+      "th": 0.5
+    },
+    "HAND_POINT_UP": {
+      "hold": 300,
+      "cooldown": 1500
+    },
+    "HAND_VICTORY": {
+      "hold": 800,
+      "cooldown": 1500
+    },
+    "HAND_THUMB_DOWN": {
+      "hold": 250,
+      "cooldown": 800
+    },
+    "HAND_SWIPE_RIGHT": {
+      "cooldown": 700
+    }
+  },
+  "global": {
+    "HAND_VICTORY": {
+      "type": "pause"
+    },
+    "HAND_POINT_UP": {
+      "type": "listen"
+    }
+  },
+  "profiles": {
+    "home": {
+      "packages": [
+        "@home"
+      ],
+      "actions": {
+        "HAND_THUMB_UP": {
+          "type": "openApp",
+          "package": "com.zhiliaoapp.musically"
+        },
+        "HAND_FIST": {
+          "type": "openApp",
+          "package": "com.mobile.legends"
+        }
+      }
+    },
+    "tiktok": {
+      "packages": [
+        "com.zhiliaoapp.musically",
+        "com.ss.android.ugc.trill"
+      ],
+      "actions": {
+        "TILT_RIGHT": {
+          "type": "swipe",
+          "x1": 0.5,
+          "y1": 0.75,
+          "x2": 0.5,
+          "y2": 0.25,
+          "ms": 160
+        },
+        "HAND_THUMB_UP": {
+          "type": "doubleTap",
+          "x": 0.5,
+          "y": 0.45
+        },
+        "TILT_LEFT": {
+          "type": "swipe",
+          "x1": 0.5,
+          "y1": 0.3,
+          "x2": 0.5,
+          "y2": 0.75,
+          "ms": 160
+        },
+        "HAND_FIST": {
+          "type": "tap",
+          "x": 0.5,
+          "y": 0.5
+        },
+        "BROWS_UP": {
+          "type": "clickText",
+          "text": [
+            "омментар",
+            "omment"
+          ]
+        },
+        "HAND_SWIPE_LEFT": {
+          "type": "back"
+        },
+        "MOUTH_OPEN": {
+          "type": "clickText",
+          "text": [
+            "оделиться",
+            "Share"
+          ]
+        }
+      }
+    },
+    "mlbb": {
+      "packages": [
+        "com.mobile.legends"
+      ],
+      "actions": {
+        "HAND_THUMB_UP": {
+          "type": "tap",
+          "x": 0.6,
+          "y": 0.12
+        },
+        "MOUTH_OPEN": {
+          "type": "tap",
+          "x": 0.9,
+          "y": 0.8
+        },
+        "BROWS_UP": {
+          "type": "tap",
+          "x": 0.97,
+          "y": 0.62
+        },
+        "HAND_FIST": {
+          "type": "tap",
+          "x": 0.82,
+          "y": 0.88
+        }
+      }
+    }
+  },
+  "apps": {
+    "тикток": "com.zhiliaoapp.musically",
+    "тик ток": "com.zhiliaoapp.musically",
+    "tiktok": "com.zhiliaoapp.musically",
+    "млбб": "com.mobile.legends",
+    "мобайл легенд": "com.mobile.legends",
+    "mobile legends": "com.mobile.legends",
+    "ютуб": "com.google.android.youtube",
+    "телеграм": "org.telegram.messenger",
+    "ватсап": "com.whatsapp"
+  },
+  "voice": [
+    {
+      "say": [
+        "тикток главная",
+        "тик ток главная",
+        "tiktok главная",
+        "тикток лента"
+      ],
+      "inApp": "com.zhiliaoapp.musically",
+      "action": {
+        "type": "clickText",
+        "text": [
+          "Главная",
+          "Home"
+        ]
+      }
+    },
+    {
+      "say": [
+        "тикток друзья",
+        "тик ток друзья",
+        "tiktok друзья"
+      ],
+      "inApp": "com.zhiliaoapp.musically",
+      "action": {
+        "type": "clickText",
+        "text": [
+          "Друзья",
+          "Friends"
+        ]
+      }
+    },
+    {
+      "say": [
+        "тикток входящие",
+        "тик ток входящие",
+        "tiktok входящие",
+        "тикток сообщения"
+      ],
+      "inApp": "com.zhiliaoapp.musically",
+      "action": {
+        "type": "clickText",
+        "text": [
+          "Входящие",
+          "Inbox"
+        ]
+      }
+    },
+    {
+      "say": [
+        "тикток профиль",
+        "тик ток профиль",
+        "tiktok профиль"
+      ],
+      "inApp": "com.zhiliaoapp.musically",
+      "action": {
+        "type": "clickText",
+        "text": [
+          "Профиль",
+          "Profile"
+        ]
+      }
+    },
+    {
+      "say": [
+        "комментарий огонь"
+      ],
+      "inApp": "com.zhiliaoapp.musically",
+      "action": {
+        "type": "seq",
+        "steps": [
+          {
+            "type": "clickText",
+            "text": [
+              "омментар",
+              "omment"
+            ]
+          },
+          {
+            "type": "wait",
+            "ms": 900
+          },
+          {
+            "type": "setText",
+            "text": "🔥"
+          },
+          {
+            "type": "wait",
+            "ms": 300
+          },
+          {
+            "type": "clickText",
+            "text": [
+              "Отправить",
+              "Post",
+              "Send"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "say": [
+        "тикток",
+        "тик ток",
+        "tiktok"
+      ],
+      "action": {
+        "type": "openApp",
+        "package": "com.zhiliaoapp.musically"
+      }
+    },
+    {
+      "say": [
+        "млбб",
+        "мобайл легенд",
+        "mobile legends"
+      ],
+      "action": {
+        "type": "openApp",
+        "package": "com.mobile.legends"
+      }
+    },
+    {
+      "say": [
+        "домой",
+        "рабочий стол"
+      ],
+      "action": {
+        "type": "home"
+      }
+    },
+    {
+      "say": [
+        "назад"
+      ],
+      "action": {
+        "type": "back"
+      }
+    },
+    {
+      "say": [
+        "недавние",
+        "последние приложения"
+      ],
+      "action": {
+        "type": "recents"
+      }
+    },
+    {
+      "say": [
+        "шторка",
+        "уведомления"
+      ],
+      "action": {
+        "type": "notifications"
+      }
+    },
+    {
+      "say": [
+        "пауза",
+        "продолжи жесты",
+        "стоп жесты"
+      ],
+      "action": {
+        "type": "pause"
+      }
+    }
+  ]
+}

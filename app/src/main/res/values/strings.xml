@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GestureTouch</string>
+    <string name="accessibility_description">Выполняет свайпы и тапы по жестам лица, чтобы управлять телефоном без касаний.</string>
+</resources>

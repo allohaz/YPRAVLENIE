@@ -1,0 +1,9 @@
+Положи в эту папку две модели MediaPipe (имена менять нельзя):
+
+1) face_landmarker.task   (мимика и голова)
+https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
+
+2) gesture_recognizer.task   (руки)
+https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task
+
+Если второй модели нет, приложение работает только с лицом.
